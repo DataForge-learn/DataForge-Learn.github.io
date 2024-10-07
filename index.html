@@ -54,7 +54,7 @@
             },
             body: JSON.stringify({
                 language: 'python',
-                version: '3.9',  // Try this version or any other valid one
+                version: '3.9',  // or any available version
                 files: [{
                     name: 'code.py',
                     content: code
@@ -63,8 +63,9 @@
         });
 
         let result = await response.json();
-        console.log(result);  // Log the full response in the console for inspection
+        console.log(result);  // Log the full response for debugging
 
+        // Use result.run.output instead of result.output
         if (result.run && result.run.output) {
             document.getElementById('output').innerText = result.run.output;
         } else if (result.run && result.run.stderr) {
