@@ -44,40 +44,42 @@
         }
     
         async function runPython() {
-    let code = document.getElementById('codeArea').value;
+            await checkAvailableRuntimes();
+            let code = document.getElementById('codeArea').value;
 
-    try {
-        let response = await fetch('https://emkc.org/api/v2/piston/execute', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                language: 'python',
-                version: '3.10',  // or any available version
-                files: [{
-                    name: 'code.py',
-                    content: code
-                }]
-            })
-        });
+            try {
+                let response = await fetch('https://emkc.org/api/v2/piston/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        language: 'python',
+                        version: '3.10',  // or any available version
+                        files: [{
+                            name: 'code.py',
+                            content: code
+                        }]
+                    })
+                });
 
-        let result = await response.json();
-        console.log(result);  // Log the full response for debugging
+                let result = await response.json();
+                console.log(result);  // Log the full response for debugging
 
-        // Use result.run.output instead of result.output
-        if (result.run && result.run.output) {
-            document.getElementById('output').innerText = result.run.output;
-        } else if (result.run && result.run.stderr) {
-            document.getElementById('output').innerText = 'Error: ' + result.run.stderr;
-        } else {
-            document.getElementById('output').innerText = 'No output received!';
+                // Use result.run.output instead of result.output
+                if (result.run && result.run.output) {
+                    document.getElementById('output').innerText = result.run.output;
+                } else if (result.run && result.run.stderr) {
+                    document.getElementById('output').innerText = 'Error: ' + result.run.stderr;
+                } else {
+                    document.getElementById('output').innerText = 'No output received!';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('output').innerText = 'Error: ' + error.message;
+            }
         }
-    } catch (error) {
-        console.error('Error:', error);
-        document.getElementById('output').innerText = 'Error: ' + error.message;
-    }
-}
-</script>
+        window.onload = checkAvailableRuntimes;
+        </script>
 </body>
 </html>
