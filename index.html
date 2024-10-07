@@ -44,39 +44,38 @@
         }
     
         async function runPython() {
-            // Optionally check available runtimes
-            await checkAvailableRuntimes();  // Check available runtimes before running code
-    
-            let code = document.getElementById('codeArea').value;
-            let response = await fetch('https://emkc.org/api/v2/piston/execute', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    language: 'python',
-                    version: '3.10',  // Use one of the available versions
-                    files: [{
-                        name: 'code.py',
-                        content: code
-                    }]
-                })
-            });
-    
-            let result = await response.json();
-            console.log(result);  // Log the entire response for debugging
-    
-            if (result.output) {
-                document.getElementById('output').innerText = result.output;
-            } else if (result.message) {
-                document.getElementById('output').innerText = result.message;
-            } else {
-                document.getElementById('output').innerText = 'No output received!';
-            }
+    let code = document.getElementById('codeArea').value;
+
+    try {
+        let response = await fetch('https://emkc.org/api/v2/piston/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                language: 'python',
+                version: '3.9',  // Try this version or any other valid one
+                files: [{
+                    name: 'code.py',
+                    content: code
+                }]
+            })
+        });
+
+        let result = await response.json();
+        console.log(result);  // Log the full response in the console for inspection
+
+        if (result.run && result.run.output) {
+            document.getElementById('output').innerText = result.run.output;
+        } else if (result.run && result.run.stderr) {
+            document.getElementById('output').innerText = 'Error: ' + result.run.stderr;
+        } else {
+            document.getElementById('output').innerText = 'No output received!';
         }
-    
-        // Call checkAvailableRuntimes when the page loads
-        window.onload = checkAvailableRuntimes;
-    </script>
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('output').innerText = 'Error: ' + error.message;
+    }
+}
 </body>
 </html>
