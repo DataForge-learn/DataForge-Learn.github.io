@@ -42,11 +42,11 @@
             let runtimes = await response.json();
             console.log('Available runtimes:', runtimes);
         }
-
+    
         async function runPython() {
             // Optionally check available runtimes
-            // await checkAvailableRuntimes(); 
-
+            await checkAvailableRuntimes();  // Check available runtimes before running code
+    
             let code = document.getElementById('codeArea').value;
             let response = await fetch('https://emkc.org/api/v2/piston/execute', {
                 method: 'POST',
@@ -55,17 +55,17 @@
                 },
                 body: JSON.stringify({
                     language: 'python',
-                    version: '3.11',  // Change this to a version you know works
+                    version: '3.8',  // Use one of the available versions
                     files: [{
                         name: 'code.py',
                         content: code
                     }]
                 })
             });
-
+    
             let result = await response.json();
             console.log(result);  // Log the entire response for debugging
-
+    
             if (result.output) {
                 document.getElementById('output').innerText = result.output;
             } else if (result.message) {
@@ -74,6 +74,9 @@
                 document.getElementById('output').innerText = 'No output received!';
             }
         }
+    
+        // Call checkAvailableRuntimes when the page loads
+        window.onload = checkAvailableRuntimes;
     </script>
 </body>
 </html>
